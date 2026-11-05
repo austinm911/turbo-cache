@@ -1,4 +1,4 @@
-import { TurboCache, type TurboCacheOptions } from "../../src/index.ts"
+import { TurboCache, type TurboCacheOptions } from "../../src/index.js"
 
 export const options = {
 	main: import.meta.url,

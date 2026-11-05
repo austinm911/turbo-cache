@@ -11,8 +11,8 @@ import * as Alchemy from "alchemy"
 import * as State from "alchemy/State"
 import { Effect, Redacted } from "effect"
 
-import { teamToken } from "../src/index.ts"
-import Cache, { options } from "./fixtures/cache.ts"
+import { teamToken } from "../src/index.js"
+import Cache, { options } from "./fixtures/cache.js"
 
 const providers = Cloudflare.providers()
 const state = Alchemy.localState()

@@ -7,7 +7,7 @@ import { identity } from "effect/Function"
 import * as HttpServerRequest from "effect/http/HttpServerRequest"
 import * as HttpServerResponse from "effect/http/HttpServerResponse"
 
-import { artifactHandler } from "./protocol.ts"
+import { artifactHandler } from "./protocol.js"
 
 export interface TurboCacheOptions {
 	/** `import.meta.url` of the module whose default export is this cache. Alchemy loads that module in the Worker. */
@@ -78,5 +78,5 @@ export const TurboCache = (options: TurboCacheOptions) => {
 	)
 }
 
-export type { TeamCredential } from "./protocol.ts"
-export { artifactHandler, platformOf } from "./protocol.ts"
+export type { TeamCredential } from "./protocol.js"
+export { artifactHandler, platformOf } from "./protocol.js"

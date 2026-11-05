@@ -2,7 +2,7 @@ import * as GitHub from "@alchemy.run/github"
 import * as Output from "alchemy/Output"
 import { Effect } from "effect"
 
-import { teamToken, type TurboCacheOptions } from "./index.ts"
+import { teamToken, type TurboCacheOptions } from "./index.js"
 
 export interface GitHubTurboEnvOptions {
 	/** The deployed cache, as `yield*` of the module that default-exports `TurboCache(...)` returns it. */
