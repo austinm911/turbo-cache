@@ -1,0 +1,52 @@
+{
+	"name": "@austinm911/turbo-cache",
+	"version": "0.1.0",
+	"description": "A Turbo remote cache on Cloudflare Workers and R2, declared with Alchemy and Effect",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/austinm911/turbo-cache.git"
+	},
+	"files": [
+		"src",
+		"README.md",
+		"PROVENANCE.md",
+		"LICENSE"
+	],
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts",
+		"./github": "./src/github.ts",
+		"./protocol": "./src/protocol.ts"
+	},
+	"scripts": {
+		"format": "oxfmt",
+		"typecheck": "tsc --noEmit -p tsconfig.json",
+		"test": "bun test",
+		"check": "oxfmt --check && bun run typecheck && bun run test"
+	},
+	"devDependencies": {
+		"@alchemy.run/cloudflare": "2.0.0-beta.85",
+		"@alchemy.run/github": "2.0.0-beta.85",
+		"@alchemy.run/test": "2.0.0-beta.85",
+		"@cloudflare/workers-types": "5.20261026.1",
+		"@effect/platform-node": "4.1.2",
+		"@types/bun": "1.4.4",
+		"alchemy": "2.0.0-beta.85",
+		"effect": "4.1.2",
+		"oxfmt": "0.76.0",
+		"turbo": "2.11.10",
+		"typescript": "6.0.3"
+	},
+	"peerDependencies": {
+		"@alchemy.run/cloudflare": ">=2.0.0-beta.85",
+		"@alchemy.run/github": ">=2.0.0-beta.85",
+		"alchemy": ">=2.0.0-beta.85",
+		"effect": "^4.1.2"
+	},
+	"peerDependenciesMeta": {
+		"@alchemy.run/github": {
+			"optional": true
+		}
+	}
+}

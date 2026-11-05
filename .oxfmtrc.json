@@ -1,0 +1,10 @@
+{
+	"$schema": "https://cdn.jsdelivr.net/npm/oxfmt/configuration_schema.json",
+	"useTabs": true,
+	"printWidth": 100,
+	"proseWrap": "never",
+	"semi": false,
+	"sortImports": true,
+	"sortPackageJson": true,
+	"ignorePatterns": [".alchemy/**"]
+}
