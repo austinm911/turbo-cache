@@ -111,25 +111,29 @@ test(
 )
 
 test(
-	"each platform has its own artifacts, so a native build never replays on another OS",
+	"an artifact is shared across platforms and clients without a turbo User-Agent",
 	Effect.gen(function* () {
 		const { origin, alpha } = yield* tokens
 		const path = "/v8/artifacts/platform?slug=alpha"
-		yield* call(origin, path, { method: "PUT", token: alpha, agent: MAC, body: "mac" })
-		expect((yield* call(origin, path, { token: alpha, agent: LINUX })).status).toBe(404)
-		yield* call(origin, path, { method: "PUT", token: alpha, agent: LINUX, body: "linux" })
-		const mac = yield* call(origin, path, { token: alpha, agent: MAC })
-		expect(yield* Effect.promise(() => mac.text())).toBe("mac")
-		for (const agent of [
-			undefined,
-			"curl/8.7.1",
-			"turbo 2.11.10",
-			"turbo 2.11.10 1.89.0 mac/os arm64",
-		]) {
-			expect(
-				(yield* call(origin, path, { token: alpha, ...(agent === undefined ? {} : { agent }) }))
-					.status,
-			).toBe(400)
+		expect(
+			(yield* call(origin, path, { method: "PUT", token: alpha, agent: MAC, body: "shared" }))
+				.status,
+		).toBe(200)
+		for (const client of [{ agent: LINUX }, {}]) {
+			const get = yield* call(origin, path, { token: alpha, ...client })
+			expect(get.status).toBe(200)
+			expect(yield* Effect.promise(() => get.text())).toBe("shared")
+			const head = yield* call(origin, path, { method: "HEAD", token: alpha, ...client })
+			expect(head.status).toBe(200)
+			const query = yield* call(origin, "/v8/artifacts?slug=alpha", {
+				method: "POST",
+				token: alpha,
+				...client,
+				body: JSON.stringify({ hashes: ["platform"] }),
+			})
+			expect(yield* Effect.promise(() => query.json())).toEqual({
+				platform: { size: 6, taskDurationMs: 0 },
+			})
 		}
 	}),
 )

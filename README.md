@@ -4,8 +4,7 @@ A [Turbo](https://turborepo.dev) remote cache on a Cloudflare Worker in front of
 
 - Artifacts expire `retentionDays` (14) after upload, through an R2 lifecycle rule.
 - Each team slug gets its own token, which reads and writes only that team's artifacts.
-- Artifacts are kept apart by the OS and CPU architecture turbo reports in its User-Agent. Turbo's task hash covers neither, so without this a native build from one platform would replay on another. No client or CI configuration is involved.
-- Only the turbo CLI is served. Other clients get a 400.
+- Artifacts are stored at `<team>/<hash>`, shared across operating systems and CPU architectures. Cached outputs must be platform-independent. Tasks producing native output must declare their platform in Turbo's `env` inputs.
 
 ## Install
 
@@ -60,7 +59,7 @@ env:
 
 ## Local runs
 
-Set the same four variables in the shell, for example through fnox, so every checkout and worktree shares builds. Read the token from the stack's state:
+Set the same four variables in the shell, for example through fnox, with `TURBO_CACHE=local:,remote:r` so shells read shared builds and CI remains the only writer. Read the token from the stack's state:
 
 ```sh
 bun alchemy state cat <stack>/<stage>/TurboCacheToken-<team> --no-input --log-level none \

@@ -43,30 +43,6 @@ const forbidden = () =>
 		"The token does not authorize this team. Each token belongs to one team slug. Fix: set TURBO_TEAM to the team the token was issued for.",
 	)
 
-const unknownClient = () =>
-	failure(
-		400,
-		"unknown_client",
-		"The request did not come from the turbo CLI. Artifacts are stored per platform, read from turbo's User-Agent. Fix: reach the cache through turbo.",
-	)
-
-// Turbo's task hash covers neither the OS nor the CPU architecture, so an artifact holding native
-// output built on one platform would replay on another. Turbo names both in its User-Agent
-// (`turbo <version> <rustc> <os> <arch>`), so the cache keeps each platform's artifacts apart
-// without any client configuration.
-export const platformOf = (request: Request): Option.Option<string> => {
-	const words = (request.headers.get("user-agent") ?? "").split(" ")
-	const [client, os, arch] = [words[0], words.at(-2), words.at(-1)]
-	return client === "turbo" &&
-		words.length >= 5 &&
-		os !== undefined &&
-		arch !== undefined &&
-		/^[a-z0-9_]+$/u.test(os) &&
-		/^[a-z0-9_]+$/u.test(arch)
-		? Option.some(`${os}-${arch}`)
-		: Option.none()
-}
-
 const routeOf = (request: Request): Route => {
 	const { pathname } = new URL(request.url)
 	const method = request.method
@@ -180,7 +156,7 @@ const readArtifact = Effect.fn("TurboCache.read")(function* (
 
 // The parts of Turbo's remote cache API (https://turborepo.dev/docs/openapi) a self-hosted cache
 // serves. Authentication runs before any storage access, and a token reaches only its own team.
-// Artifacts are stored at `<team>/<os>-<arch>/<hash>`.
+// Artifacts are stored at `<team>/<hash>`.
 export const artifactHandler = (storage: Storage, credentials: readonly TeamCredential[]) =>
 	Effect.fn("TurboCache.request")(function* (request: Request) {
 		const route = routeOf(request)
@@ -199,23 +175,14 @@ export const artifactHandler = (storage: Storage, credentials: readonly TeamCred
 		) {
 			return forbidden()
 		}
-		const platform = platformOf(request)
 		return yield* Route.$match(route, {
 			Missing: () => Effect.succeed(refusal(404)),
 			Status: () => Effect.succeed(Response.json({ status: "enabled" }, { headers: noStore })),
 			Events: () => Effect.succeed(refusal(204)),
-			Query: () =>
-				Option.match(platform, {
-					onNone: () => Effect.succeed(unknownClient()),
-					onSome: (os) => queryArtifacts(request, storage, `${team}/${os}`),
-				}),
+			Query: () => queryArtifacts(request, storage, `${team}`),
 			Artifact: ({ hash }) =>
-				Option.match(platform, {
-					onNone: () => Effect.succeed(unknownClient()),
-					onSome: (os) =>
-						request.method === "PUT"
-							? putArtifact(request, storage, `${team}/${os}/${hash}`)
-							: readArtifact(request, storage, `${team}/${os}/${hash}`),
-				}),
+				request.method === "PUT"
+					? putArtifact(request, storage, `${team}/${hash}`)
+					: readArtifact(request, storage, `${team}/${hash}`),
 		})
 	})
