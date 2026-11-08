@@ -79,4 +79,4 @@ export const TurboCache = (options: TurboCacheOptions) => {
 }
 
 export type { TeamCredential } from "./protocol.js"
-export { artifactHandler, platformOf } from "./protocol.js"
+export { artifactHandler } from "./protocol.js"
