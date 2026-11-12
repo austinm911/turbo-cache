@@ -26,14 +26,14 @@
 		"check": "oxfmt --check && bun run typecheck && bun run test"
 	},
 	"devDependencies": {
-		"@alchemy.run/cloudflare": "2.0.0-beta.85",
-		"@alchemy.run/github": "2.0.0-beta.85",
-		"@alchemy.run/test": "2.0.0-beta.85",
+		"@alchemy.run/cloudflare": "2.0.0-beta.86",
+		"@alchemy.run/github": "2.0.0-beta.86",
+		"@alchemy.run/test": "2.0.0-beta.86",
 		"@cloudflare/workers-types": "5.20261026.1",
-		"@effect/platform-node": "4.1.2",
+		"@effect/platform-node": "4.1.4",
 		"@types/bun": "1.4.4",
-		"alchemy": "2.0.0-beta.85",
-		"effect": "4.1.2",
+		"alchemy": "2.0.0-beta.86",
+		"effect": "4.1.4",
 		"oxfmt": "0.76.0",
 		"turbo": "2.11.10",
 		"typescript": "6.0.3"
